@@ -73,28 +73,8 @@ int main() {
 	bt2initial();
 	spi_init();
 	unsigned char tc;
-	while(1) {
-		/*
-		SetBit(spiBaseAddr,cr,6);
-		SetBit(spiBaseAddr,cr,5);
-		//enable slave device
-		SetRegister(spiBaseAddr,ssr,0x0);
-		int counter;
-		//transfer 5 bytes to get 5 bytes trunk
-		for(counter=0; counter<5; counter++){
-			SetBit(spiBaseAddr,cr,8);
-			*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x82;
-			ClearBit(spiBaseAddr,cr,8);
-			delay1();
-		}
-	    //disable slave device
-		SetRegister(spiBaseAddr,ssr,0x01);
-
-		
-		//uart_print(" ");
-		//uart_print("SR=");  uart_print(my_itoa(*READ_IO(spiBaseAddr+sr)));
+	while(1) {	
 		//方向判断
-*/	
 		Read_Data(&x,&y);
 		if(x<1024&&y<1024){
 			if(x>300&&x<700&&y>300&&y<700) tc=0;
@@ -122,7 +102,7 @@ int main() {
 		}
 		if(tc!=0){
 			//uart_print("\n\r");
-			*WRITE_IO(UART_BASE + thr) = (unsigned int)tc;
+			//*WRITE_IO(UART_BASE + thr) = (unsigned int)tc;
 		}
 	}
 	return 0;

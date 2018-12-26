@@ -23,62 +23,7 @@ void delay1() {
 	for (j = 0; j < (800); j++) ;	// delay 
 }
 volatile unsigned char x_low, y_low;
-/*
-void Write_Tx(char data){
-	SetRegister(spiBaseAddr,ssr,1);
-	SetRegister(spiBaseAddr,cr,0x1E6);
-	
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = data;
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	//*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	
-	//SetRegister(spiBaseAddr,dtr,0x80);
-	
-	SetRegister(spiBaseAddr,ssr,0);
-	SetRegister(spiBaseAddr,cr,0x0E6);
-	//start transmitting 
-	delay1();
-	//SetRegister(spiBaseAddr,ssr,1);
-	//SetRegister(spiBaseAddr,cr,0x1E6);
-}
 
-void Read_Rx(){
-	SetRegister(spiBaseAddr,ssr,0xffff);
-	
-	SetRegister(spiBaseAddr,cr,0x186);
-	
-	delay1();
-	*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x0B;
-	//SetRegister(spiBaseAddr,dtr,0x0B);
-	delay1();
-	*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x08;
-	//SetRegister(spiBaseAddr,dtr,0x08);
-	//delay1();
-	*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-	//SetRegister(spiBaseAddr,dtr,0x00);
-	
-	SetRegister(spiBaseAddr,ssr,0xfffe);
-	SetRegister(spiBaseAddr,cr,0x086);
-	delay1();
-	//start transmitting
-	SetRegister(spiBaseAddr,ssr,0xffff);
-	delay1();
-	SetRegister(spiBaseAddr,cr,0x186);
-
-	while(ReadBit(spiBaseAddr,sr,0)==0)
-    { 
-        uart_print("DRR=");  
-        //while(ReadBit(spiBaseAddr,sr,0)==1);
-        //SetRegister(spiBaseAddr,ssr,0); 
-        uart_print(my_itoa(*READ_IO_CHAR(spiBaseAddr+drr)));//一读就报错！！ 
-		uart_print(" ");
-        //uart_print("SR=");  uart_print(my_itoa(*READ_IO(spiBaseAddr+sr)));
-    }
-}
-*/
 
 //useless
 void Write_Enable(){
@@ -116,7 +61,7 @@ void Read_Data(int *x, int *y){
 	
 	while(ReadBit(spiBaseAddr,sr,0)==0)
     { 
-        //uart_print("DRR=");  
+        uart_print("DRR=");  
         //while(ReadBit(spiBaseAddr,sr,0)==1);
         //SetRegister(spiBaseAddr,ssr,0); 	
 		x_low = *READ_IO_CHAR(spiBaseAddr+drr);
@@ -124,7 +69,7 @@ void Read_Data(int *x, int *y){
 		y_low = *READ_IO_CHAR(spiBaseAddr+drr);
 		*y = y_low|(*READ_IO_CHAR(spiBaseAddr+drr)<<8);
 		*READ_IO_CHAR(spiBaseAddr+drr);
-		//uart_print(my_itoa(x));	
+		uart_print(my_itoa(x));	
 		//uart_print(my_itoa(*READ_IO_CHAR(spiBaseAddr+drr)));
         //uart_print(my_itoa(*READ_IO_CHAR(spiBaseAddr+drr)));//一读就报错！！ 
 		//uart_print(" ");
@@ -140,135 +85,10 @@ void Read_Data(int *x, int *y){
 void spi_init(){
 		// *WRITE_IO(spiBaseAddr+GIER)=0x80000000;//global interrput enabled
 		// *WRITE_IO(spiBaseAddr+0x28)=0x2;//interrput enabled
-		//SetRegister(spiBaseAddr,GIER,0);
+		SetRegister(spiBaseAddr,GIER,0);
         *WRITE_IO(spiBaseAddr+srr)=0x0000000a;
 	    SetRegister(spiBaseAddr,cr,0x1E6);
-		//SetRegister(spiBaseAddr,IPIER,0x202B);
-		//SetBit(spiBaseAddr,IPIER,13);
-		//SetRegister(spiBaseAddr,cr,0x1E4);
-		//SetBit(spiBaseAddr,GIER,31);
-        //ClearBit(spiBaseAddr,cr,0x0);
-     	//SetRegister(spiBaseAddr,ssr,0x0);//select control
-		
-		
-		/* Write dummy ReadId to the DTR register */
-		/*
-		*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x0B;
-		//SetRegister(spiBaseAddr,dtr,0x0B);
-		delay1();
-		*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x08;
-		//SetRegister(spiBaseAddr,dtr,0x08);
-		delay1();
-		*WRITE_IO_CHAR(spiBaseAddr+dtr) = 0x00;
-		//SetRegister(spiBaseAddr,dtr,0x00);
-		
-		
-		int ControlReg = ReadRegister(spiBaseAddr, cr);
-		ControlReg &= ~XSP_CR_TRANS_INHIBIT_MASK;
-        //uart_print(my_itoa((spiBaseAddr+cr)));  
-        SetRegister(spiBaseAddr,cr,ControlReg);
-		
-		ControlReg = ReadRegister(spiBaseAddr, cr);
-		ControlReg |= XSP_CR_TRANS_INHIBIT_MASK;
-        //uart_print(my_itoa((spiBaseAddr+cr)));  
-        SetRegister(spiBaseAddr,cr,ControlReg);
-		*/
-		
-        // SetBit(spiBaseAddr,IPIER,2);
-        //uart_print("CR=");    
-        //uart_print(my_itoa(*READ_IO(spiBaseAddr+cr)));
-		/* Master Inhibit disable in the CR */
-
-		/* Read the Rx Data Register */
-		//while(1){
-			/*
-              delay1(); 
-             //SetBit(spiBaseAddr,GIER,31);
-             // ClearBit(spiBaseAddr,cr,9);//LSB
-              //SetBit(spiBaseAddr,cr,7);
-            SetRegister(spiBaseAddr,cr,0x1E6);
-        
-                  //ClearBit(spiBaseAddr,cr,5);
-                 // ClearBit(spiBaseAddr,cr,6);
-              //1
-              SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                  SetRegister(spiBaseAddr,dtr,0x82);   
-                 SetRegister(spiBaseAddr,ssr,0); 
-              uart_print("k=");
-               //2  
-            SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                  SetRegister(spiBaseAddr,dtr,0);   
-                     SetRegister(spiBaseAddr,ssr,0); 
-                      
-              //3
-                SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                  SetRegister(spiBaseAddr,dtr,0);   
-                     SetRegister(spiBaseAddr,ssr,0); 
-            
-             //4
-             SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                  SetRegister(spiBaseAddr,dtr,0);
-                     SetRegister(spiBaseAddr,ssr,0);      
-				//5
-                 SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                  SetRegister(spiBaseAddr,dtr,0); 
-                 SetRegister(spiBaseAddr,ssr,0);      
-					//new circle
-                
-                   ++k;
-                   uart_print("k=");
-                   uart_print(my_itoa(k));
-                    uart_print("\r\n ");
-                ClearBit(spiBaseAddr,cr,8);
-                while(ReadBit(spiBaseAddr,sr,2)==0);
-                 
-                SetBit(spiBaseAddr,cr,8);
-              //   
-
-            //    while(ReadBit(spiBaseAddr,sr,3)==1);
-            //       SetRegister(spiBaseAddr,dtr,Buffer[2]);   
-            //     while(ReadBit(spiBaseAddr,sr,3)==1);    
-            //       SetRegister(spiBaseAddr,dtr,Buffer[2]);  
-            //     while(ReadBit(spiBaseAddr,sr,3)==1);
-            //       SetRegister(spiBaseAddr,dtr,Buffer[2]);  
-            //     while(ReadBit(spiBaseAddr,sr,3)==1);
-            //      SetRegister(spiBaseAddr,dtr,Buffer[2]); 
-    
-                delay1();
-                 while(ReadBit(spiBaseAddr,sr,0)==0)
-                 { 
-                     uart_print("DRR= ");  
-                     //while(ReadBit(spiBaseAddr,sr,0)==1);
-    
-                      SetRegister(spiBaseAddr,ssr,0); 
-                     uart_print(my_itoa(*READ_IO(spiBaseAddr+drr)));//一读就报错！！ 
-                     uart_print("SR=");  uart_print(my_itoa(*READ_IO(spiBaseAddr+sr)));
-                 }
-             // ClearBit(spiBaseAddr,cr,8);
-                // SetRegister(spiBaseAddr,cr,0x18E); 
-                 
-                SetRegister(spiBaseAddr,ssr,0XFFFFFFFF);
-                SetBit(spiBaseAddr,sr,5);
-                   SetBit(spiBaseAddr,sr,6);
-                   
-             uart_print("\r\n ");
-             // uart_print(my_itoa(*READ_IO(spiBaseAddr+drr)));//一读就报错！！
-             // uart_print("\r\n ");
-			 */
-			 //Write_Tx(0x00);
-			 //Read_Rx();
-			 //Write_Enable();
-			 //Write_Data();
-			 //Read_Data();
-			 //Erase();
-			 //Erase();
-			 //Write_Tx(0x83);Read_Rx();
-			 //Write_Tx(0x83);Read_Rx();
-			// Write_Tx(0x83);Read_Rx();
-			// Write_Tx(0x83);Read_Rx();
-			 //uart_print("\r\n");			 
-        //}
-        uart_print("initial is complished\r\n"); 
+        //uart_print("initial is complished\r\n"); 
 
 }
 
@@ -368,24 +188,7 @@ char *reverse(char *s)
 
  static char s[100];      //必须为static变量，或者是全局变量  
 char *my_itoa(int n)  
-{  
-   
-  /*  int i=0,first=0,k=0,mask=0xf0000000;
-    for(i=31;i>=0;--i){
-        mask=(0x80000000)>>(31-i);
-       if(((((unsigned int)n)>>i)&mask)==0 && (first==0)){
-           ;
-       }
-       else{
-           first=1;
-           s[k++]='0'+(((((unsigned int)n)>>i)&mask)==0)?0:1;
-
-       }
-
-    }
-           s[k]='\0';
-       return s;*/
-        
+{      
     int i = 0,isNegative = 0;  
     
     if((isNegative = n) < 0) //如果是负数，先转为正数  
